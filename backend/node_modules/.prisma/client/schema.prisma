@@ -1,0 +1,49 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  state    String
+  email    String @unique
+  password String
+  Ads      Ads[]
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  slug String
+  name String
+  img  String
+  Ads  Ads[]
+}
+
+model Ads {
+  id              Int       @id @default(autoincrement())
+  title           String
+  description     String
+  price           Decimal
+  priceNegotiable Boolean   @default(false)
+  views           Int       @default(0)
+  images          Image[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  userId          Int
+  user            User      @relation(fields: [userId], references: [id])
+  category        Category? @relation(fields: [categoryId], references: [id])
+  categoryId      Int?
+  stateName       String
+}
+
+model Image {
+  id   Int    @id @default(autoincrement())
+  url  String
+  ad   Ads    @relation(fields: [adId], references: [id])
+  adId Int
+}
